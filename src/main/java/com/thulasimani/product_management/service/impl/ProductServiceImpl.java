@@ -7,6 +7,8 @@ import com.thulasimani.product_management.exception.ResourceNotFoundException;
 import com.thulasimani.product_management.repository.ProductRepository;
 import com.thulasimani.product_management.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,33 @@ public class ProductServiceImpl implements ProductService {
         Product product=productRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Product not found with id: "+id));
         return mapToResponse(product);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ProductResponse> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable).map(this::mapToResponse);
+    }
+
+    @Override
+    public ProductResponse updateProduct(Long id, ProductRequest request) {
+        Product product=findProductById(id);
+        product.setProductName(request.productName());
+        product.setModifiedBy("System");
+        product.setModifiedOn(LocalDateTime.now());
+        Product updatedProduct=productRepository.save(product);
+        return mapToResponse(updatedProduct);
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+        Product product=findProductById(id);
+        productRepository.delete(product);
+    }
+
+    private Product findProductById(Long id){
+        return productRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Product not found with id: " +id));
     }
 
     private ProductResponse mapToResponse(Product product){
