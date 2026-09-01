@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse createProduct(ProductRequest request) {
         Product product=Product. builder()
                 .productName(request.productName())
-                .createdBy("System")
+                .createdBy(getCurrentUsername())
                 .createdOn(LocalDateTime.now())
                 .build();
 
@@ -58,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse updateProduct(Long id, ProductRequest request) {
         Product product=findProductById(id);
         product.setProductName(request.productName());
-        product.setModifiedBy("System");
+        product.setModifiedBy(getCurrentUsername());
         product.setModifiedOn(LocalDateTime.now());
         Product updatedProduct=productRepository.save(product);
         return mapToResponse(updatedProduct);
@@ -106,6 +108,11 @@ public class ProductServiceImpl implements ProductService {
                 product.getModifiedBy(),
                 product.getModifiedOn()
         );
+    }
+
+    private String getCurrentUsername(){
+        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 
 }

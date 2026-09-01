@@ -11,3 +11,13 @@ spring:
         properties:
           hibernate:
             format_sql: true
+
+
+jwt:
+  secret: product-management-zest-india-assignment-02092026
+  expiration: 900000
+
+app:
+  admin:
+    username: admin
+    password: Admin@123
