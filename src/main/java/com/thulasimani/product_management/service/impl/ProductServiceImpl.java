@@ -1,9 +1,13 @@
 package com.thulasimani.product_management.service.impl;
 
+import com.thulasimani.product_management.dto.request.ItemRequest;
 import com.thulasimani.product_management.dto.request.ProductRequest;
+import com.thulasimani.product_management.dto.response.ItemResponse;
 import com.thulasimani.product_management.dto.response.ProductResponse;
+import com.thulasimani.product_management.entity.Item;
 import com.thulasimani.product_management.entity.Product;
 import com.thulasimani.product_management.exception.ResourceNotFoundException;
+import com.thulasimani.product_management.repository.ItemRepository;
 import com.thulasimani.product_management.repository.ProductRepository;
 import com.thulasimani.product_management.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -20,6 +25,7 @@ import java.time.LocalDateTime;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final ItemRepository itemRepository;
 
     @Override
     @Transactional
@@ -62,6 +68,28 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         Product product=findProductById(id);
         productRepository.delete(product);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ItemResponse> getItemsByProductId(Long productId) {
+        findProductById(productId);
+        return itemRepository.findByProductId(productId)
+                .stream()
+                .map(item -> new ItemResponse(item.getId(),item.getProduct().getId(),item.getQuantity()))
+                .toList();
+    }
+
+    @Override
+    public ItemResponse createItem(Long productId, ItemRequest request) {
+        Product product=findProductById(productId);
+        Item item= Item.builder()
+                .product(product)
+                .quantity(request.quantity())
+                .build();
+
+        Item savedItem=itemRepository.save(item);
+        return new ItemResponse(savedItem.getId(), savedItem.getProduct().getId(), savedItem.getQuantity());
     }
 
     private Product findProductById(Long id){
