@@ -43,7 +43,7 @@ public class SecurityConfig {
                         "/api/v1/auth/**",
                         "/swagger-ui/**",
                         "/swagger-ui.html",
-                        "/v3/api/docs/**"
+                        "/v3/api-docs/**"
                 ).permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/v1/products/**")
                                 .hasAnyRole("USER","ADMIN")
