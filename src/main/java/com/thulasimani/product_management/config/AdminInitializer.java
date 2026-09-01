@@ -5,7 +5,7 @@ import com.thulasimani.product_management.entity.User;
 import com.thulasimani.product_management.enums.Role;
 import com.thulasimani.product_management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
