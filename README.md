@@ -1,6 +1,6 @@
 # product-management
 
-## Prerequisites
+## SET-UP Prerequisites
 
 Before running the application, make sure you have:
 
