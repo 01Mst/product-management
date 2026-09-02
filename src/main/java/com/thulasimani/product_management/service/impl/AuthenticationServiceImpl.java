@@ -48,6 +48,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .role(Role.USER)
                 .build();
 
+        userRepository.save(user);
+
     }
 
     @Override

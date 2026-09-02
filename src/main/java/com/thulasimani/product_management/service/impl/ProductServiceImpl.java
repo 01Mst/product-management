@@ -6,6 +6,7 @@ import com.thulasimani.product_management.dto.response.ItemResponse;
 import com.thulasimani.product_management.dto.response.ProductResponse;
 import com.thulasimani.product_management.entity.Item;
 import com.thulasimani.product_management.entity.Product;
+import com.thulasimani.product_management.exception.BusinessException;
 import com.thulasimani.product_management.exception.ResourceNotFoundException;
 import com.thulasimani.product_management.repository.ItemRepository;
 import com.thulasimani.product_management.repository.ProductRepository;
@@ -68,7 +69,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(Long id) {
-        Product product=findProductById(id);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Product not found with id: " + id
+                        ));
+
+        if (itemRepository.existsByProductId(id)) {
+            throw new BusinessException(
+                    "Cannot delete product because it has associated items"
+            );
+        }
+
         productRepository.delete(product);
     }
 

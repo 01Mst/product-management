@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,7 @@ public class ProductController {
             summary = "Get all products",
             description = "Returns a paginated list of products"
     )
-    public ResponseEntity<Page<ProductResponse>> getAllProducts(Pageable pageable){
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(@ParameterObject Pageable pageable){
             return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
 
@@ -62,7 +63,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.updateProduct(id, productRequest));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @Operation(
             summary = "Delete product",
             description = "Deletes a product. ADMIN role required."
@@ -84,7 +85,7 @@ public class ProductController {
     @PostMapping("{id}/items")
     @Operation(
             summary = "Create product item",
-            description = "Creates an item for a product"
+            description = "Creates an item for a product."
     )
     public ResponseEntity<ItemResponse> createItem(@PathVariable Long id, @Valid @RequestBody ItemRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createItem(id, request));
